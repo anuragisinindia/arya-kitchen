@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Great Rasgulla Quest 🍬</title>
+<style>
+  :root {
+    --bg-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --primary: #ff5e62;
+    --primary-hover: #ff3b40;
+    --accent: #ff9966;
+    --success: #2ec4b6;
+    --text: #2b2d42;
+    --muted: #6c757d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-container {
+    width: 100%;
+    max-width: 580px;
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Header & XP Bar */
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    color: #e03131;
+    font-weight: 800;
+  }
+  .xp-container {
+    background: #f1f3f5;
+    border-radius: 20px;
+    height: 18px;
+    width: 100%;
+    margin-top: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  }
+  .xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .stage-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 12px;
+    background: #fff3bf;
+    color: #f08c00;
+    margin-top: 8px;
+  }
+
+  /* Screen Card */
+  .screen {
+    display: none;
+    animation: fadeIn 0.4s ease forwards;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mascot-box {
+    text-align: center;
+    font-size: 4rem;
+    margin: 10px 0;
+    animation: bounce 1.8s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  p.subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
+  /* Task Checkbox List */
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    padding: 12px 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  .task-item:hover {
+    background: #fff5f5;
+    border-color: #ffc9c9;
+  }
+  .task-item input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+
+  /* Induction Badge Box */
+  .induction-badge {
+    background: #e7f5ff;
+    border-left: 4px solid #339af0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: #1971c2;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Interactive Timers */
+  .timer-card {
+    background: #fff4e6;
+    border: 2px dashed #ffa94d;
+    padding: 16px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .timer-clock {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #d9480f;
+    letter-spacing: 2px;
+    margin: 8px 0;
+  }
+  .timer-btn {
+    background: #ff922b;
+    color: white;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .timer-btn:hover { background: #f76707; }
+
+  /* Navigation Buttons */
+  .btn-next {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-radius: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 94, 98, 0.35);
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+  .btn-next:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+  }
+  .btn-next:disabled {
+    background: #dee2e6;
+    color: #868e96;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Confetti Canvas */
+  canvas#confetti {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="game-container">
+  <div class="header">
+    <h1>🍬 The Great Rasgulla Quest</h1>
+    <div class="stage-badge" id="stageBadge">Level 1 of 6</div>
+    <div class="xp-container">
+      <div class="xp-bar" id="xpBar"></div>
+    </div>
+  </div>
+
+  <!-- LEVEL 1: PREPARATION -->
+  <div class="screen active" id="screen1">
+    <div class="mascot-box">🧪</div>
+    <h2>Mission 1: The Magic Potion Prep</h2>
+    <p class="subtitle">Assemble the alchemy tools before the heat begins!</p>
+    
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(1)" />
+        Squeeze ~4 tbsp lemon juice (catch seeds with your hand!)
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(1)" />
+        Add 4 tbsp water into the lemon juice to dilute the acid
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(1)" />
+        Rinse your cheesecloth in clean warm water and squeeze it dry
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(1)" />
+        Drape the cloth over your deep bowl
+      </label>
+    </div>
+
+    <button class="btn-next" id="nextBtn1" onclick="goToScreen(2)" disabled>Complete Mission 1 (+20 XP)</button>
+  </div>
+
+  <!-- LEVEL 2: BOILING & CURDLING -->
+  <div class="screen" id="screen2">
+    <div class="mascot-box">🥛</div>
+    <h2>Mission 2: The Milk Transmutation</h2>
+    <p class="subtitle">Turn 2 liters of creamy milk into golden curds.</p>
+
+    <div class="induction-badge">
+      ⚡ <strong>Induction Setting:</strong> 1200W–1400W. Stir constantly with a flat spatula!
+    </div>
+
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(2)" />
+        Pour all 4 milk packs (2L) into your pressure cooker
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(2)" />
+        Bring to a rolling boil, then turn the induction OFF (0W)
+      </label>
+    </div>
+
+    <div class="timer-card">
+      <div>⏳ <strong>Cooldown Wait Time:</strong></div>
+      <div class="timer-clock" id="timerDisplay1">02:00</div>
+      <button class="timer-btn" onclick="startTimer(120, 'timerDisplay1', 'timerBtn1')" id="timerBtn1">Start 2-Min Cool Timer</button>
+    </div>
+
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(2)" />
+        Drizzle diluted lemon mix slowly while stirring gently in 1 direction
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(2)" />
+        Clear green whey separated from soft white curds!
+      </label>
+    </div>
+
+    <button class="btn-next" id="nextBtn2" onclick="goToScreen(3)" disabled>Complete Mission 2 (+40 XP)</button>
+  </div>
+
+  <!-- LEVEL 3: RINSE & HANG -->
+  <div class="screen" id="screen3">
+    <div class="mascot-box">🚿</div>
+    <h2>Mission 3: The Icy Wash & Drain</h2>
+    <p class="subtitle">Wash off the sour lemon taste so the clouds stay sweet!</p>
+
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(3)" />
+        Pour the curds into the cheesecloth over your bowl
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(3)" />
+        Rinse curds directly under cold running tap water for 30 seconds
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(3)" />
+        Gently squeeze out excess dripping liquid (don't crush it bone dry!)
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(3)" />
+        Rinse out the cooker pan right now so it's ready for syrup
+      </label>
+    </div>
+
+    <div class="timer-card">
+      <div>🪝 <strong>Hang Cloth Over Kitchen Sink:</strong></div>
+      <div class="timer-clock" id="timerDisplay2">30:00</div>
+      <button class="timer-btn" onclick="startTimer(1800, 'timerDisplay2', 'timerBtn2')" id="timerBtn2">Start 30-Min Drain Timer</button>
+    </div>
+
+    <button class="btn-next" id="nextBtn3" onclick="goToScreen(4)" disabled>Complete Mission 3 (+60 XP)</button>
+  </div>
+
+  <!-- LEVEL 4: KNEADING THE DOUGH -->
+  <div class="screen" id="screen4">
+    <div class="mascot-box">🖐️</div>
+    <h2>Mission 4: The 5-Minute Palm Massage</h2>
+    <p class="subtitle">Transform crumbly curds into smooth, velvety clay.</p>
+
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(4)" />
+        Dump chhena onto your flat stainless steel plate (thali)
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(4)" />
+        Sprinkle 1 level tsp corn flour (cornstarch) over it
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(4)" />
+        Smear outward using the heel of your palm for 5 to 7 minutes
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(4)" />
+        Dough forms a non-sticky, smooth ball that leaves the plate clean!
+      </label>
+    </div>
+
+    <button class="btn-next" id="nextBtn4" onclick="goToScreen(5)" disabled>Complete Mission 4 (+80 XP)</button>
+  </div>
+
+  <!-- LEVEL 5: ROLLING THE ORBS -->
+  <div class="screen" id="screen5">
+    <div class="mascot-box">🔮</div>
+    <h2>Mission 5: The Orb Crafter's Guild</h2>
+    <p class="subtitle">Cracks are the enemy! Make every single ball glass-smooth.</p>
+
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(5)" />
+        Divide dough into 20–24 small portions
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(5)" />
+        Roll each portion firmly between palms until crack-free (they double in size!)
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(5)" />
+        Split into 2 squads: 10–12 balls for Batch A, remainder for Batch B
+      </label>
+    </div>
+
+    <button class="btn-next" id="nextBtn5" onclick="goToScreen(6)" disabled>Complete Mission 5 (+90 XP)</button>
+  </div>
+
+  <!-- LEVEL 6: STEAM CHAMBER POACHING -->
+  <div class="screen" id="screen6">
+    <div class="mascot-box">🌋</div>
+    <h2>Mission 6: The Steam Chamber Trial</h2>
+    <p class="subtitle">The high-pressure cooker test to poach your clouds.</p>
+
+    <div class="induction-badge">
+      ⚡ <strong>Syrup Boil:</strong> 2 cups sugar + 8 cups water at 1400W–1600W until bubbling!
+    </div>
+
+    <div class="task-list">
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(6)" />
+        Slide Batch A (10–12 balls) into rolling syrup, seal lid + whistle on
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(6)" />
+        Cook at 1200W until you hear <strong>1 Whistle!</strong>
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(6)" />
+        Immediately drop induction to low (300W–500W) for 5 minutes
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(6)" />
+        Turn off. Wait for pressure to drop naturally (do NOT lift whistle!)
+      </label>
+      <label class="task-item">
+        <input type="checkbox" class="quest-check" onchange="checkCompletion(6)" />
+        Repeat for Batch B (add 1/2 cup hot water to syrup first)
+      </label>
+    </div>
+
+    <button class="btn-next" id="nextBtn6" onclick="goToScreen(7)" disabled>Unlock Master Sweetmakers! (+100 XP)</button>
+  </div>
+
+  <!-- VICTORY SCREEN -->
+  <div class="screen" id="screen7">
+    <div class="mascot-box">🏆</div>
+    <h2>QUEST COMPLETE!</h2>
+    <p class="subtitle">Legendary Bengali Sweetmakers Certified ✨</p>
+    
+    <div style="text-align: center; margin: 20px 0; font-size: 1.05rem; line-height: 1.6;">
+      🎉 You both conquered the casein proteins and made super spongy rasgullas from scratch! Let them cool down in their sweet bath before tasting.
+    </div>
+
+    <button class="btn-next" onclick="restartQuest()">Play Again 🔄</button>
+  </div>
+
+</div>
+
+<script>
+  let currentScreen = 1;
+  const totalScreens = 6;
+
+  function updateXP(screenNum) {
+    const pct = Math.round(((screenNum - 1) / totalScreens) * 100);
+    document.getElementById('xpBar').style.width = pct + '%';
+    document.getElementById('stageBadge').innerText = screenNum <= 6 ? `Level ${screenNum} of 6` : 'Victory!';
+  }
+
+  function checkCompletion(screenNum) {
+    const screen = document.getElementById(`screen${screenNum}`);
+    const checkboxes = screen.querySelectorAll('.quest-check');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    document.getElementById(`nextBtn${screenNum}`).disabled = !allChecked;
+  }
+
+  function goToScreen(screenNum) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`screen${screenNum}`).classList.add('active');
+    currentScreen = screenNum;
+    updateXP(screenNum);
+
+    if (screenNum === 7) {
+      fireConfetti();
+    }
+  }
+
+  function startTimer(durationSeconds, displayId, btnId) {
+    const display = document.getElementById(displayId);
+    const btn = document.getElementById(btnId);
+    btn.disabled = true;
+    let timer = durationSeconds;
+
+    const interval = setInterval(() => {
+      const minutes = parseInt(timer / 60, 10);
+      const seconds = parseInt(timer % 60, 10);
+
+      display.textContent = 
+        (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+        (seconds < 10 ? "0" + seconds : seconds);
+
+      if (--timer < 0) {
+        clearInterval(interval);
+        display.textContent = "DONE! 🔔";
+        btn.textContent = "Finished!";
+      }
+    }, 1000);
+  }
+
+  function restartQuest() {
+    document.querySelectorAll('.quest-check').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.btn-next').forEach(btn => btn.disabled = true);
+    document.getElementById('nextBtn6').disabled = true;
+    goToScreen(1);
+  }
+
+  // Simple Confetti Animation
+  function fireConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = [];
+    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#ffeb3b', '#ff9800'];
+
+    for (let i = 0; i < 120; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 8 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        velY: Math.random() * 3 + 2,
+        velX: (Math.random() - 0.5) * 2
+      });
+    }
+
+    let animationFrame;
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.y += p.velY;
+        p.x += p.velX;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      });
+      animationFrame = requestAnimationFrame(render);
+    }
+    render();
+    setTimeout(() => cancelAnimationFrame(animationFrame), 5000);
+  }
+
+  updateXP(1);
+</script>
+</body>
+</html>
