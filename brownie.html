@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🍫 Super Brownie Clicker!</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background-color: #4e2a1e;
+      color: white;
+      padding-top: 30px;
+    }
+    .brownie {
+      font-size: 120px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s;
+    }
+    .brownie:active {
+      transform: scale(0.85);
+    }
+    button {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+      background-color: #ff9f43;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #ee5253;
+    }
+    .score {
+      font-size: 36px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍫 Super Brownie Clicker! 🍫</h1>
+  <p>Click the giant brownie to bake more brownies!</p>
+
+  <div class="score">Brownies: <span id="count">0</span></div>
+
+  <!-- Clickable Brownie -->
+  <div class="brownie" onclick="bakeBrownie()">🧁</div>
+
+  <br>
+
+  <!-- Upgrades -->
+  <button onclick="buySprinkles()">🌈 Buy Sprinkles (Cost: 10 Brownies)</button>
+  <button onclick="buyOven()">🔥 Buy Super Oven (Cost: 50 Brownies)</button>
+
+  <script>
+    let brownies = 0;
+    let browniesPerClick = 1;
+
+    function bakeBrownie() {
+      brownies += browniesPerClick;
+      document.getElementById('count').innerText = brownies;
+    }
+
+    function buySprinkles() {
+      if (brownies >= 10) {
+        brownies -= 10;
+        browniesPerClick += 1;
+        document.getElementById('count').innerText = brownies;
+        alert("🌈 Sprinkles Added! +1 extra brownie per click!");
+      } else {
+        alert("❌ You need 10 brownies to buy sprinkles!");
+      }
+    }
+
+    function buyOven() {
+      if (brownies >= 50) {
+        brownies -= 50;
+        browniesPerClick += 5;
+        document.getElementById('count').innerText = brownies;
+        alert("🔥 Super Oven unlocked! +5 extra brownies per click!");
+      } else {
+        alert("❌ You need 50 brownies to buy the Super Oven!");
+      }
+    }
+  </script>
+
+</body>
+</html>
