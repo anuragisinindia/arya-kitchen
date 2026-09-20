@@ -2,88 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🍫 Super Brownie Clicker!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏰 Chocolate Kingdom Defender! 🍫</title>
   <style>
+    * { box-sizing: border-box; }
     body {
-      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 15px;
+      background: linear-gradient(135deg, #1c0a04, #3d1b0e, #1c0a04);
+      font-family: 'Comic Sans MS', 'Arial', sans-serif;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      background-color: #4e2a1e;
-      color: white;
-      padding-top: 30px;
     }
-    .brownie {
-      font-size: 120px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.1s;
+
+    .game-card {
+      background: rgba(0, 0, 0, 0.7);
+      border: 5px solid #ff9800;
+      border-radius: 25px;
+      padding: 20px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9);
     }
-    .brownie:active {
-      transform: scale(0.85);
+
+    h1 {
+      color: #ffd700;
+      font-size: 1.8rem;
+      margin-top: 0;
+      text-shadow: 2px 2px #8b0000;
     }
+
+    .story-box {
+      background: #2b1208;
+      border: 2px solid #ffa726;
+      border-radius: 15px;
+      padding: 15px;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     button {
-      font-size: 20px;
-      padding: 10px 20px;
-      margin: 10px;
-      border-radius: 10px;
-      border: none;
-      background-color: #ff9f43;
+      background: linear-gradient(180deg, #ff9800, #e65100);
+      border: 3px solid #ffe082;
+      border-radius: 15px;
       color: white;
+      font-size: 1.1rem;
+      font-family: inherit;
+      font-weight: bold;
+      padding: 12px 15px;
       cursor: pointer;
-      font-weight: bold;
+      box-shadow: 0 4px 0 #8c2700;
+      transition: transform 0.1s;
+      text-align: left;
     }
-    button:hover {
-      background-color: #ee5253;
+
+    button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #8c2700;
     }
-    .score {
-      font-size: 36px;
-      font-weight: bold;
+
+    .status-bar {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #ffcc80;
     }
   </style>
 </head>
 <body>
 
-  <h1>🍫 Super Brownie Clicker! 🍫</h1>
-  <p>Click the giant brownie to bake more brownies!</p>
+  <div class="game-card">
+    <h1>🏰 DEFEND THE BROWNIES! 🍫</h1>
+    
+    <div class="story-box" id="story">
+      Grumble the Hungry Giant is stomping toward the kitchen to steal your fresh brownies! What trap do you set at the gates?
+    </div>
 
-  <div class="score">Brownies: <span id="count">0</span></div>
+    <div class="choices" id="choice-buttons">
+      <button onclick="makeChoice('A')">🍬 [A] Trap him with Sticky Gummy Worms!</button>
+      <button onclick="makeChoice('B')">☁️ [B] Blast the Marshmallow Foam Cannon!</button>
+      <button onclick="makeChoice('C')">🪶 [C] Send the Foot-Tickling Robo-Pigeon!</button>
+    </div>
 
-  <!-- Clickable Brownie -->
-  <div class="brownie" onclick="bakeBrownie()">🧁</div>
-
-  <br>
-
-  <!-- Upgrades -->
-  <button onclick="buySprinkles()">🌈 Buy Sprinkles (Cost: 10 Brownies)</button>
-  <button onclick="buyOven()">🔥 Buy Super Oven (Cost: 50 Brownies)</button>
+    <div class="status-bar" id="status">
+      🔥 Real Brownies status: Baking in the oven...
+    </div>
+  </div>
 
   <script>
-    let brownies = 0;
-    let browniesPerClick = 1;
+    let stage = 1;
 
-    function bakeBrownie() {
-      brownies += browniesPerClick;
-      document.getElementById('count').innerText = brownies;
-    }
+    function makeChoice(option) {
+      const story = document.getElementById('story');
+      const buttons = document.getElementById('choice-buttons');
+      const status = document.getElementById('status');
 
-    function buySprinkles() {
-      if (brownies >= 10) {
-        brownies -= 10;
-        browniesPerClick += 1;
-        document.getElementById('count').innerText = brownies;
-        alert("🌈 Sprinkles Added! +1 extra brownie per click!");
-      } else {
-        alert("❌ You need 10 brownies to buy sprinkles!");
-      }
-    }
+      if (stage === 1) {
+        if (option === 'A') {
+          story.innerHTML = "🍬 **WHAM!** The gummy worm net sticks to Grumble's boots! He trips and does a funny silly wiggle! But he gets up and climbs toward the kitchen window!";
+        } else if (option === 'B') {
+          story.innerHTML = "☁️ **FOOSH!** Marshmallow foam covers Grumble! He looks like a giant snowball and roars with laughter! He bounces right up to the window!";
+        } else {
+          story.innerHTML = "🪶 **TICKLE TICKLE!** The robo-pigeon tickles his feet! Grumble laughs so hard he rolls over! Then he marches up to the kitchen window!";
+        }
 
-    function buyOven() {
-      if (brownies >= 50) {
-        brownies -= 50;
-        browniesPerClick += 5;
-        document.getElementById('count').innerText = brownies;
-        alert("🔥 Super Oven unlocked! +5 extra brownies per click!");
-      } else {
-        alert("❌ You need 50 brownies to buy the Super Oven!");
+        stage = 2;
+        status.innerText = "🔥 Real Brownies status: Getting warm and chocolatey...";
+        buttons.innerHTML = `
+          <button onclick="makeChoice('A')">🌈 [A] Make a slippery Rainbow Sprinkle slide!</button>
+          <button onclick="makeChoice('B')">🍫 [B] Pour a gooey Hot Fudge moat!</button>
+          <button onclick="makeChoice('C')">🎂 [C] Offer him a giant slice of cake!</button>
+        `;
+      } 
+      else if (stage === 2) {
+        if (option === 'A') {
+          story.innerHTML = "🌈 Grumble slides all the way back down into the yard! *WHOOSH!* But he runs right back to the oven door!";
+        } else if (option === 'B') {
+          story.innerHTML = "🍫 Grumble licks the hot fudge moat clean! *SLURP!* Now he is extra hungry and reaches for the oven door!";
+        } else {
+          story.innerHTML = "🎂 Grumble eats the cake in ONE BITE! But he still smells the fresh chocolate brownies in the oven!";
+        }
+
+        stage = 3;
+        status.innerText = "🔥 Real Brownies status: ALMOST READY TO EAT!";
+        buttons.innerHTML = `
+          <button onclick="makeChoice('A')">🧁 [A] Share a brownie with Grumble as a friend!</button>
+          <button onclick="makeChoice('B')">🛡️ [B] Use the Chocolate Shield to block the oven!</button>
+          <button onclick="makeChoice('C')">🤗 [C] Give Grumble a giant Chef Hug!</button>
+        `;
+      } 
+      else if (stage === 3) {
+        story.innerHTML = "🎉 **YOU WIN!** Chef Arya saved the kitchen! Grumble promised to be a good giant and help wash the dishes in exchange for 1 brownie square! 🍫⭐";
+        status.innerText = "✨ REAL BROWNIES ARE BAKED! VICTORY!";
+        buttons.innerHTML = `
+          <button onclick="location.reload()">🔄 Play Again!</button>
+        `;
       }
     }
   </script>
